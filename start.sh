@@ -2,12 +2,16 @@
 
 source .env
 
+if [[ "$FLORESCCTV_ENV" != "PROD" && "$FLORESCCTV_ENV" != "DEV" ]]; then
+  echo "An env hasn't been specified by FLORESCCTV_ENV, you must specify either DEV or PROD"
+  exit 1
+fi
+
 CERT_PATH=$PWD/selfsign.crt
 PKEY_PATH=$PWD/selfsign.key
-MODE=$([ -z "$FLORESCCTV_ENV" ] && echo "DEV" || echo "$FLORESCCTV_ENV")
-ASSET_DIR=$([ "$MODE" == "PROD" ] && echo "build" || echo "static")
+ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
 
-echo "Running the server in $MODE mode"
+echo "Running the server in $FLORESCCTV_ENV mode"
 
 sudo /usr/bin/uv4l \
 --external-driver \

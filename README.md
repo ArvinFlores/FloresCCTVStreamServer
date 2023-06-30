@@ -91,6 +91,14 @@ Note: Normally the `-days` flag should be something low like 365 but it's ok in 
 sudo openssl genrsa -out ./selfsign.key 2048 &&  sudo openssl req -new -x509 -key ./selfsign.key -days 3650 -out ./selfsign.crt -sha256
 ```
 
+### Update env file
+
+Update the `.env` file with the following:
+```
+FLORESCCTV_ENV=DEV
+```
+Note: Not setting this variable will cause the `start.sh` script to throw an error
+
 ### Launch the server
 From the root of the project run
 
