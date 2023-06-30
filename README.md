@@ -1,6 +1,6 @@
-# FloresCCTVServer
+# FloresCCTVStreamServer
 
-Server package for the camera live stream
+Streaming server for the camera
 
 ## How it works
 The Pi streams the output of the camera module through a rtsp server created with the help of the `uv4l-webrtc` package. Devices connected to the same network will be able to access the camera stream via
@@ -13,9 +13,23 @@ https://<raspberry_pi_ip>:9000
 
 * Raspberry Pi 4 Model B (4GB RAM)
 * Raspberry Pi OS 32-bit (Bullseye)
-* Raspberry Pi Camera V2
+* [Raspberry Pi Camera V2](https://www.amazon.com/Raspberry-Pi-Camera-Module-Megapixel/dp/B01ER2SKFS?th=1)
+* [Youmi Mini USB Mic](https://www.amazon.com/Newest-YOUMI-Microphone-Laptop-desktop/dp/B01MQ2AA0X)
 
 ## Preconditions
+
+The following steps assume the Raspberry Pi has all the components connected already, the OS is installed, and everything is up and running
+
+### Update asound.conf
+For uv4l to be able to use the usb mic and speaker as the default input/output devices, we have to update the `/etc/asound.conf` file with these settings:
+```
+pcm.!default {
+   type asym
+   playback.pcm "plug:hw:0"
+   capture.pcm "plug:dsnoop:1"
+}
+```
+Note: If the file doesn't exist, then create it
 
 ### Enable SSH access
 See [this guide](https://www.raspberrypi.com/documentation/computers/remote-access.html#enabling-the-server) for how to enable ssh access for your raspberry pi
@@ -34,10 +48,9 @@ Serial          : <serial number>
 ## Installation
 
 ### Cloning the project
-Open up a terminal window and clone the repo:
+Open up a terminal window and clone the repo to your desired folder:
 
 ```
-cd /path/to/my/projects
 git clone git@github.com:ArvinFlores/FloresCCTVServer.git
 ```
 
@@ -78,13 +91,29 @@ Note: Normally the `-days` flag should be something low like 365 but it's ok in 
 sudo openssl genrsa -out ./selfsign.key 2048 &&  sudo openssl req -new -x509 -key ./selfsign.key -days 3650 -out ./selfsign.crt -sha256
 ```
 
-### Launch Web Stream
+### Launch the server
 From the root of the project run
 
 ```
 ./start.sh
 ```
 
+You will now be able to access the project at `https://<raspberry_pi_ip>:9000`
+
 ## Development
 
+Because this repo relies on `uv4l`, a closed source project, there is not much to develop for this particular repo except uv4l configuration changes most likely. Instead, see the [web assets repo](https://github.com/ArvinFlores/FloresCCTVWebAssets/tree/master) to get started on developing the UI locally
+
 ## Production
+
+### Running the app in production
+
+In the `.env` file, set the env flag to production:
+```
+FLORESCCTV_ENV=PROD
+```
+Start the application as you normally would:
+```
+./start.sh
+```
+You should now see the production version of the app running on `https://<raspberry_pi_ip>:9000`
