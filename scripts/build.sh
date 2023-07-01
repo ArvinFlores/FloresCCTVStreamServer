@@ -29,7 +29,7 @@ npm run build
 
 log "Copying the production web assets into $CURR_DIR/build"
 mkdir -p $CURR_DIR/build
-rm $CURR_DIR/build/*
+rm -f $CURR_DIR/build/*
 cp -r build/* $CURR_DIR/build
 cd $CURR_DIR
 
