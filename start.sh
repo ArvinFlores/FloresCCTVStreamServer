@@ -7,6 +7,10 @@ if [[ "$FLORESCCTV_ENV" != "PROD" && "$FLORESCCTV_ENV" != "DEV" ]]; then
   exit 1
 fi
 
+if [[ $FLORESCCTV_ENV == "PROD" ]]; then
+  source scripts/build.sh
+fi
+
 CERT_PATH=$PWD/selfsign.crt
 PKEY_PATH=$PWD/selfsign.key
 ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
