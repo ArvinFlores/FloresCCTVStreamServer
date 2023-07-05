@@ -51,7 +51,7 @@ Serial          : <serial number>
 Open up a terminal window and clone the repo to your desired folder:
 
 ```
-git clone git@github.com:ArvinFlores/FloresCCTVServer.git
+git clone git@github.com:ArvinFlores/FloresCCTVStreamServer.git
 ```
 
 ### Install uv4l
