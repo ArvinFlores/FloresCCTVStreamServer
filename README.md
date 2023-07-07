@@ -20,17 +20,6 @@ https://<raspberry_pi_ip>:9000
 
 The following steps assume the Raspberry Pi has all the components connected already, the OS is installed, and everything is up and running
 
-### Update asound.conf
-For uv4l to be able to use the usb mic and speaker as the default input/output devices, we have to update the `/etc/asound.conf` file with these settings:
-```
-pcm.!default {
-   type asym
-   playback.pcm "plug:hw:0"
-   capture.pcm "plug:dsnoop:1"
-}
-```
-Note: If the file doesn't exist, then create it
-
 ### Enable SSH access
 See [this guide](https://www.raspberrypi.com/documentation/computers/remote-access.html#enabling-the-server) for how to enable ssh access for your raspberry pi
 
@@ -44,6 +33,50 @@ When adding the ssh key to the account, make sure the title for the key follows 
 cat /proc/cpuinfo | grep -i serial
 Serial          : <serial number>
 ```
+
+### Enable the Legacy Camera
+Open the config interface by running
+```
+sudo raspi-config
+```
+Then go to `Interface Options > Legacy Camera > Yes`. You will then be prompted to reboot, please do so
+
+### Verify the camera is working
+Try taking a picture with the following command
+```
+libcamera-still -o pic.jpg
+```
+If you see some output and the `pic.jpg` in the current working directory you ran the command from then you are good to go. However, if you see something like this
+```
+Preview window unavailable
+[0:01:28.555758223] [1035]  INFO Camera camera_manager.cpp:299 libcamera v0.0.4+22-923f5d70
+ERROR: *** no cameras available ***
+```
+Then first check to see that the camera is being detected by running
+```
+vcgencmd get_camera
+```
+you should see some output like this
+```
+supported=1 detected=1, libcamera interfaces=0
+```
+If that's the case then you just need to modify the `/boot/config.txt`, place the following all the way at the bottom of the file right under the `[all]` entry like this
+```
+[all]
+dtoverlay=imx219
+```
+then restart the pi with `sudo reboot`. Hopefully this will now let you take pictures with the camera
+
+### Update asound.conf
+For uv4l to be able to use the usb mic and speaker as the default input/output devices, we have to update the `/etc/asound.conf` file with these settings:
+```
+pcm.!default {
+   type asym
+   playback.pcm "plug:hw:0"
+   capture.pcm "plug:dsnoop:1"
+}
+```
+Note: If the file doesn't exist, then create it
 
 ## Installation
 
@@ -64,12 +97,6 @@ echo /opt/vc/lib/ | sudo tee /etc/ld.so.conf.d/vc.conf
 sudo ldconfig
 ```
 
-Enable the Legacy Camera
-```
-sudo raspi-config
-```
-Then go to `Interface Options > Legacy Camera > Yes`. You will then be prompted to reboot, please do so
-
 Now you need to add the `uv4l` repo to be able to download the required packages
 ```
 curl https://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/uv4l.gpg
@@ -85,14 +112,12 @@ sudo apt-get install uv4l-webrtc
 
 ### Create ssl self-signed certificates
 We need to add ssl certs to be able to use some HTML5 apis that require the page to be loaded through `https://`. From the root of the project run the following command:
-
-Note: Normally the `-days` flag should be something low like 365 but it's ok in this case as the app is only accessible on a LAN
 ```
 sudo openssl genrsa -out ./selfsign.key 2048 &&  sudo openssl req -new -x509 -key ./selfsign.key -days 3650 -out ./selfsign.crt -sha256
 ```
+Note: Normally the `-days` flag should be something low like 365 but it's ok in this case as the app is only accessible on a LAN
 
 ### Create env file
-
 Create an `.env` file at the project root and add the following:
 ```
 FLORESCCTV_ENV=DEV
