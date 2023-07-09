@@ -12,18 +12,49 @@ https://<raspberry_pi_ip>:9000
 ## Hardware / Software
 
 * Raspberry Pi 4 Model B (4GB RAM)
-* Raspberry Pi OS 32-bit (Bullseye)
+* Raspberry Pi OS Lite (32-bit)
 * [Raspberry Pi Camera V2](https://www.amazon.com/Raspberry-Pi-Camera-Module-Megapixel/dp/B01ER2SKFS?th=1)
 * [Youmi Mini USB Mic](https://www.amazon.com/Newest-YOUMI-Microphone-Laptop-desktop/dp/B01MQ2AA0X)
 
 ## Preconditions
 
-The following steps assume the Raspberry Pi has all the components connected already, the OS is installed, and everything is up and running
+The following steps assume the Raspberry Pi is assembled and all the hardware components are connected (except the SD card)
 
-### Enable SSH access
-See [this guide](https://www.raspberrypi.com/documentation/computers/remote-access.html#enabling-the-server) for how to enable ssh access for your raspberry pi
+### Setup the SD card
+From the [Raspberry Pi Imager](https://www.raspberrypi.com/software), select the Raspberry Pi OS Lite (32-bit) as the Operating System
 
-Alternatively, you can also configure SSH to be enabled when first installing the OS on the SD card
+Then, open the Advanced Options (click the gear icon) and configure the following fields:
+- `Set hostname` - try to set it as something relating to the camera's scope/view in the house like `florescctv-front` if the camera will have a front view to the house for example
+- `Enable SSH` - you can select either password auth or pub-key auth, its completely up to you
+- `Set username and password` - the username should be something like `cam` or `camera` and the password should follow typical password standards
+- `Configure wireless LAN` - the Imager software might prompt you to fill these fields in automatically, but if not, you will have to fill them in manually so that the Raspberry Pi can connect to your network when it first boots
+- `Set locale settings` - set the timezone for the pi
+
+Finally, hit `Save` and then `Write` to begin writing the OS to the SD card. The process takes a few minutes. Once it's done you can power on the Pi
+
+### SSH into the Pi
+If the OS was written successfully into the SD card then you should now be able to find the Pi on your local network, you can type the following to find the Pi on your LAN
+```
+ping <hostname>.local
+```
+where `<hostname>` is whatever value you entered for the `Set hostname` field earlier
+
+you should see some output (specifically an ip address) from the `ping` command like this
+```
+PING <hostname>.local (192.168.1.220): 56 data bytes
+64 bytes from 192.168.1.220: icmp_seq=0 ttl=64 time=6.032 ms
+```
+
+now you can ssh into the Pi with this command
+```
+ssh <username>@<ip address>
+```
+The `username` is whatever value you entered for the `Set username and password` field earlier
+
+Alternatively, a shorthand can also be this
+```
+ssh <username>@<hostname>.local
+```
 
 ### Setup SSH keys for Github access
 See [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) for how to create and add an ssh key to the github account of this repo
