@@ -7,27 +7,51 @@ if [[ "$FLORESCCTV_ENV" != "PROD" && "$FLORESCCTV_ENV" != "DEV" ]]; then
   exit 1
 fi
 
+USE_SSL=yes
+STREAM_PORT=8080
+CERT_PATH=$PWD/selfsign.crt
+PKEY_PATH=$PWD/selfsign.key
+ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
+
 if [[ $FLORESCCTV_ENV == "PROD" ]]; then
   source scripts/build.sh
 fi
 
-CERT_PATH=$PWD/selfsign.crt
-PKEY_PATH=$PWD/selfsign.key
-ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
+if [[
+  -n "$FLORESCCTV_JANUS_URL" || \
+  -n "$FLORESCCTV_JANUS_ROOT" || \
+  -n "$FLORESCCTV_JANUS_ROOM" || \
+  -n "$FLORESCCTV_JANUS_USERNAME"
+]]; then
+  if [[
+    -z "$FLORESCCTV_JANUS_URL" || \
+    -z "$FLORESCCTV_JANUS_ROOT" || \
+    -z "$FLORESCCTV_JANUS_ROOM" || \
+    -z "$FLORESCCTV_JANUS_USERNAME"
+  ]]; then
+    echo -e "You must specify:\n"
+    echo -e "FLORESCCTV_JANUS_URL, FLORESCCTV_JANUS_ROOT, FLORESCCTV_JANUS_ROOM, FLORESCCTV_JANUS_USERNAME\n"
+    echo "if you wish to try connecting to the Janus server, not all variables were set so skipping for now"
+  else
+    echo "Attempting to connect to the Janus server at $FLORESCCTV_JANUS_URL$FLORESCCTV_JANUS_ROOT"
+    source scripts/janus_connect.sh $USE_SSL $STREAM_PORT &
+  fi
+fi
 
 echo "Running the server in $FLORESCCTV_ENV mode"
 
 sudo /usr/bin/uv4l \
 --external-driver \
 --device-name=video0 \
---server-option '--use-ssl=yes' \
+--server-option "--port=$STREAM_PORT" \
+--server-option "--use-ssl=$USE_SSL" \
 --server-option "--ssl-certificate-file=$CERT_PATH" \
 --server-option "--ssl-private-key-file=$PKEY_PATH" \
 --server-option "--www-root-path=$PWD/$ASSET_DIR" \
 --server-option '--www-index-file=index.html' \
 --server-option '--www-port=9000' \
 --server-option '--www-webrtc-signaling-path=/stream' \
---server-option '--www-use-ssl=yes' \
+--server-option "--www-use-ssl=$USE_SSL" \
 --server-option "--www-ssl-certificate-file=$CERT_PATH" \
 --server-option "--www-ssl-private-key-file=$PKEY_PATH" \
 --server-option '--enable-www-server=yes' \
