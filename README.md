@@ -72,6 +72,13 @@ sudo raspi-config
 ```
 Then go to `Interface Options > Legacy Camera > Yes`. You will then be prompted to reboot, please do so
 
+### Set the GPU memory limit
+Open the config interface by running
+```
+sudo raspi-config
+```
+Then go to `Performance Options > GPU Memory` and set the limit to `256`. Then `sudo reboot` for the changes to take effect
+
 ### Verify the camera is connected
 Check to see that the camera is being detected by the board by running
 ```
