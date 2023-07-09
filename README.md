@@ -41,18 +41,8 @@ sudo raspi-config
 ```
 Then go to `Interface Options > Legacy Camera > Yes`. You will then be prompted to reboot, please do so
 
-### Verify the camera is working
-Try taking a picture with the following command
-```
-libcamera-still -o pic.jpg
-```
-If you see some output and the `pic.jpg` in the current working directory you ran the command from then you are good to go. However, if you see something like this
-```
-Preview window unavailable
-[0:01:28.555758223] [1035]  INFO Camera camera_manager.cpp:299 libcamera v0.0.4+22-923f5d70
-ERROR: *** no cameras available ***
-```
-Then first check to see that the camera is being detected by running
+### Verify the camera is connected
+Check to see that the camera is being detected by the board by running
 ```
 vcgencmd get_camera
 ```
@@ -60,12 +50,6 @@ you should see some output like this
 ```
 supported=1 detected=1, libcamera interfaces=0
 ```
-If that's the case then you just need to modify the `/boot/config.txt`, place the following all the way at the bottom of the file right under the `[all]` entry like this
-```
-[all]
-dtoverlay=imx219
-```
-then restart the pi with `sudo reboot`. Hopefully this will now let you take pictures with the camera
 
 ### Update asound.conf
 For uv4l to be able to use the usb mic and speaker as the default input/output devices, we have to update the `/etc/asound.conf` file with these settings:
