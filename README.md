@@ -146,6 +146,21 @@ FLORESCCTV_ENV=DEV
 ```
 Note: Not setting this variable will cause the `start.sh` script to throw an error
 
+#### Run with Janus (optional)
+[Janus Gateway](https://github.com/meetecho/janus-gateway) is a webrtc server that allows uv4l to stream to multiple clients, without it, uv4l will only be able to stream to 1 client at a time which can be a bad user experience
+
+This step is optional, but if you'd like to leverage Janus to stream, make sure you set the following env variables
+```
+# Example
+FLORESCCTV_JANUS_URL=http://localhost:8088
+FLORESCCTV_JANUS_ROOT=/janus
+FLORESCCTV_JANUS_ROOM=1234
+FLORESCCTV_JANUS_USERNAME=User123
+```
+You must set *ALL* of these variables, otherwise the `start.sh` script will skip trying to connect to Janus
+
+Additionally, you must also follow the installation instructions [here](https://github.com/ArvinFlores/FloresCCTVGatewayServer) to get the Janus server up and running
+
 ### Launch the server
 From the root of the project run
 
@@ -154,6 +169,8 @@ From the root of the project run
 ```
 
 You will now be able to access the project at `https://<raspberry_pi_ip>:9000`
+
+Note: When running the project in `DEV` mode, you will just see a barebones html page. Continue reading to see how to get the camera streaming to your device
 
 ## Development
 
