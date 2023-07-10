@@ -25,7 +25,7 @@ log "Installing the project dependencies for $ASSETS_DIR"
 npm install
 
 log "Building the production web assets for $ASSETS_DIR"
-echo "CAMERA_IP=$(hostname -I | awk '{print $1}')" >> .env.production
+echo "CAMERA_IP=$(hostname -I | awk '{print $1}')" >> .env
 npm run build
 
 log "Copying the production web assets into $CURR_DIR/build"
