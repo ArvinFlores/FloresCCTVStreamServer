@@ -9,7 +9,7 @@ username=$FLORESCCTV_JANUS_USERNAME&\
 publish=1&\
 vformat=60&\
 hw_vcodec=0&\
-subscribe=1&\
+subscribe=0&\
 reconnect=1&\
 action=Start"
 
