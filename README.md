@@ -9,16 +9,16 @@ The Pi streams the output of the camera module through a rtsp server created wit
 https://<raspberry_pi_ip>:9000
 ```
 
-## Hardware / Software
+## Hardware
 
 * Raspberry Pi 4 Model B (4GB RAM)
-* Raspberry Pi OS Lite (32-bit)
 * [Raspberry Pi Camera V2](https://www.amazon.com/Raspberry-Pi-Camera-Module-Megapixel/dp/B01ER2SKFS?th=1)
 * [Youmi Mini USB Mic](https://www.amazon.com/Newest-YOUMI-Microphone-Laptop-desktop/dp/B01MQ2AA0X)
+* [Shuley Mini USB Speaker](https://www.amazon.com/Speaker-Portable-Computer-Notebook-Checkout/dp/B07K8DFY3Q/ref=sr_1_5?crid=19XM5MABQS6P5&keywords=mini+usb+speaker&qid=1689828097&s=electronics&sprefix=mini+usb+speake%2Celectronics%2C148&sr=1-5)
 
 ## Preconditions
 
-The following steps assume the Raspberry Pi is assembled and all the hardware components are connected (except the SD card)
+The following steps assume all the hardware components are connected to the Raspberry Pi (except the SD card)
 
 ### Setup the SD card
 From the [Raspberry Pi Imager](https://www.raspberrypi.com/software), select the Raspberry Pi OS Lite (32-bit) as the Operating System
@@ -30,7 +30,7 @@ Then, open the Advanced Options (click the gear icon) and configure the followin
 - `Configure wireless LAN` - the Imager software might prompt you to fill these fields in automatically, but if not, you will have to fill them in manually so that the Raspberry Pi can connect to your network when it first boots
 - `Set locale settings` - set the timezone for the pi
 
-Finally, hit `Save` and then `Write` to begin writing the OS to the SD card. The process takes a few minutes. Once it's done you can power on the Pi
+Finally, hit `Save` and then `Write` to begin writing the OS to the SD card. The process takes a few minutes. Once it's done you can insert the SD card into the rPi and power it on
 
 ### SSH into the Pi
 If the OS was written successfully into the SD card then you should now be able to find the Pi on your local network, you can type the following to find the Pi on your LAN
@@ -59,25 +59,21 @@ ssh <username>@<hostname>.local
 ### Setup SSH keys for Github access
 See [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) for how to create and add an ssh key to the github account of this repo
 
-When adding the ssh key to the account, make sure the title for the key follows the format `Raspberry Pi <serial number>`. To find the serial number of the pi you can run the following to get the desired output
-```
-cat /proc/cpuinfo | grep -i serial
-Serial          : <serial number>
-```
+When adding the ssh key to the account, make sure the title is something descriptive like `Front of house camera` or perhaps just the hostname of the pi, its completely up to you but just make sure the title uniquely describes the camera/raspberry pi the ssh key belongs to
 
-### Enable the Legacy Camera
+### Update raspi config 
+
+**Enable the Legacy Camera**
 Open the config interface by running
 ```
 sudo raspi-config
 ```
-Then go to `Interface Options > Legacy Camera > Yes`. You will then be prompted to reboot, please do so
+Then go to `Interface Options > Legacy Camera > Yes`
 
-### Set the GPU memory limit
-Open the config interface by running
-```
-sudo raspi-config
-```
-Then go to `Performance Options > GPU Memory` and set the limit to `256`. Then `sudo reboot` for the changes to take effect
+**Set the GPU memory limit**
+Go to `Performance Options > GPU Memory` and set the limit to `256`
+
+After updating these options you can select `Finish` so that the pi can reboot
 
 ### Verify the camera is connected
 Check to see that the camera is being detected by the board by running
@@ -91,14 +87,33 @@ supported=1 detected=1, libcamera interfaces=0
 
 ### Update asound.conf
 For uv4l to be able to use the usb mic and speaker as the default input/output devices, we have to update the `/etc/asound.conf` file with these settings:
+
+Note: If this file doesn't exist, then create it
 ```
 pcm.!default {
    type asym
-   playback.pcm "plug:hw:0"
-   capture.pcm "plug:dsnoop:1"
+   playback.pcm "plug:hw:<card number>"
+   capture.pcm "plug:dsnoop:<card number>"
 }
 ```
-Note: If the file doesn't exist, then create it
+To find the `<card number>` for `playback.pcm` run the command `aplay -l`, you will see output
+```
+**** List of PLAYBACK Hardware Devices ****
+
+card 2: UACDemoV10 [UACDemoV1.0], device 0: USB Audio [USB Audio]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+```
+in this case the `<card number>` is `2`
+
+To find the `<card number>` for `capture.pcm` run the command `arecord -l`, you will see output
+```
+**** List of CAPTURE Hardware Devices ****
+
+card 1: Device [USB PnP Sound Device], device 0: USB Audio [USB Audio]
+  Subdevices: 1/1
+```
+in this case the `<card number>` is `1`
 
 ## Installation
 
@@ -107,6 +122,24 @@ Open up a terminal window and clone the repo to your desired folder:
 
 ```
 git clone git@github.com:ArvinFlores/FloresCCTVStreamServer.git
+```
+
+### Install System Dependencies
+Update apt
+```
+sudo apt update
+sudo apt upgrade
+```
+
+**Install Node**
+```
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install nodejs
+```
+
+**Install Git**
+```
+sudo apt install git
 ```
 
 ### Install uv4l
