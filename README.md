@@ -225,6 +225,8 @@ Start the application as you normally would:
 ```
 You should now see the production version of the app running on `https://<raspberry_pi_ip>:9000`
 
+Note: When executing the `start.sh` script in production, a `build/` directory with the web assets will be created and placed at the root of the project and any subsequent calls to the script will skip rebuilding and simply just start the streaming server. If it's desired to rebuild the assets then remove the `build/` directory before executing the start script ie: `rm -rf build/ && start.sh`
+
 ### Starting the server on boot
 
 It would be nice to start the streaming server on boot, to do that we can make use of `systemctl`
