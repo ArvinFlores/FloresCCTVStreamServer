@@ -64,6 +64,7 @@ When adding the ssh key to the account, make sure the title is something descrip
 ### Update raspi config 
 
 **Enable the Legacy Camera**
+
 Open the config interface by running
 ```
 sudo raspi-config
@@ -71,6 +72,7 @@ sudo raspi-config
 Then go to `Interface Options > Legacy Camera > Yes`
 
 **Set the GPU memory limit**
+
 Go to `Performance Options > GPU Memory` and set the limit to `256`
 
 After updating these options you can select `Finish` so that the pi can reboot
