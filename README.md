@@ -224,3 +224,38 @@ Start the application as you normally would:
 ./start.sh
 ```
 You should now see the production version of the app running on `https://<raspberry_pi_ip>:9000`
+
+### Starting the server on boot
+
+It would be nice to start the streaming server on boot, to do that we can make use of `systemctl`
+
+Create the service script by doing
+```
+sudo nano /etc/systemd/system/florescctv.service
+```
+
+Paste the following content replacing `/path/to` with the path where you have installed the `FloresCCTVStreamServer` repo
+```
+[Unit]
+Description=FloresCCTV Streaming Server
+
+[Service]
+ExecStart=/path/to/FloresCCTVStreamServer/start.sh
+WorkingDirectory=/path/to/FloresCCTVStreamServer
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Set the file permissions
+```
+sudo chmod 664 /etc/systemd/system/florescctv.service
+```
+
+Finally reload the daemon and enable the service so that it starts on boot
+```
+sudo systemctl daemon-reload
+sudo systemctl enable florescctv
+```
+
+Test that this works by running `sudo reboot` and then navigating to the url where the raspberry pi camera stream should be running to confirm the service now starts on boot
