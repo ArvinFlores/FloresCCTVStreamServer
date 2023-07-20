@@ -26,6 +26,8 @@ npm install
 
 log "Building the production web assets for $ASSETS_DIR"
 echo "CAMERA_IP=$(hostname -I | awk '{print $1}')" >> .env
+echo "JANUS_URL=$FLORESCCTV_JANUS_URL$FLORESCCTV_JANUS_ROOT" >> .env
+echo "JANUS_ROOM=$FLORESCCTV_JANUS_ROOM" >> .env
 npm run build
 
 log "Copying the production web assets into $CURR_DIR/build"
