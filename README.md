@@ -119,13 +119,6 @@ in this case the `<card number>` is `1`
 
 ## Installation
 
-### Cloning the project
-Open up a terminal window and clone the repo to your desired folder:
-
-```
-git clone git@github.com:ArvinFlores/FloresCCTVStreamServer.git
-```
-
 ### Install System Dependencies
 Update apt
 ```
@@ -165,6 +158,13 @@ Finally to install the packages
 ```
 sudo apt-get update && sudo apt-get upgrade
 sudo apt-get install uv4l-webrtc
+```
+
+### Cloning the project
+Open up a terminal window and clone the repo to your desired folder:
+
+```
+git clone git@github.com:ArvinFlores/FloresCCTVStreamServer.git
 ```
 
 ### Create ssl self-signed certificates
