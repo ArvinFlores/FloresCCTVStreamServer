@@ -261,3 +261,18 @@ sudo systemctl enable florescctv
 ```
 
 Test that this works by running `sudo reboot` and then navigating to the url where the raspberry pi camera stream should be running to confirm the service now starts on boot
+
+### Add cron job to generate health.json
+The `health.json` file will be needed to provide details regarding the health of the host the camera is running on, which can then be consumed by an external service via api calls
+
+To add the cron job, open the cron job file
+```
+crontab -e
+```
+
+Then add this line to run the cron job every 5 minutes
+```
+*/5 * * * * cd /path/to/FloresCCTVStreamServer && /usr/bin/python scripts/health.py >/dev/null 2>&1
+```
+
+A `health.json` file will then be placed in the `build/` directory and can then be retrieved via an api call to `https://<raspberry_pi_ip>:9000/health.json`
