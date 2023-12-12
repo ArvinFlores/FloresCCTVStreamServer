@@ -7,6 +7,11 @@ if [[ "$FLORESCCTV_ENV" != "PROD" && "$FLORESCCTV_ENV" != "DEV" ]]; then
   exit 1
 fi
 
+if [[ $1 == "--motion" && ! -f config/motion.conf ]]; then
+  echo "The motion config file was not found, have you ran ./scripts/gen_motion_conf.sh yet?"
+  exit 1
+fi
+
 USE_SSL=yes
 STREAM_PORT=8080
 CERT_PATH=$PWD/selfsign.crt
