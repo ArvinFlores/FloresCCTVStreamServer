@@ -40,7 +40,17 @@ if [[
 fi
 
 if [[ $1 == "--motion" ]]; then
-  sudo motion -c ./config/motion.conf
+  trap "killall -s SIGKILL motion" SIGINT SIGTERM EXIT
+  ffmpeg -f video4linux2 \
+    -i /dev/video0 \
+    -vcodec copy \
+    -acodec copy \
+    -f v4l2 /dev/video1 \
+    -f v4l2 /dev/video2 \
+    -f v4l2 /dev/video3 > /dev/null 2>&1 &
+  motion -c ./config/motion.conf > /dev/null 2>&1
+  echo "motion detection enabled"
+  echo "video loopback devices have been created"
 fi
 
 echo "Running the server in $FLORESCCTV_ENV mode"
