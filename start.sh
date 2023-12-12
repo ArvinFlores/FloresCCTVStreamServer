@@ -12,6 +12,7 @@ STREAM_PORT=8080
 CERT_PATH=$PWD/selfsign.crt
 PKEY_PATH=$PWD/selfsign.key
 ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
+VIDEO_NODE=$([ $1 == "--motion" ] && echo "video1" || echo "video0")
 
 if [[ $FLORESCCTV_ENV == "PROD" ]]; then
   source scripts/build.sh
@@ -38,11 +39,15 @@ if [[
   fi
 fi
 
+if [[ $1 == "--motion" ]]; then
+  sudo motion -c ./config/motion.conf
+fi
+
 echo "Running the server in $FLORESCCTV_ENV mode"
 
 sudo /usr/bin/uv4l \
 --external-driver \
---device-name=video0 \
+--device-name="$VIDEO_NODE" \
 --server-option "--port=$STREAM_PORT" \
 --server-option "--use-ssl=$USE_SSL" \
 --server-option "--ssl-certificate-file=$CERT_PATH" \
