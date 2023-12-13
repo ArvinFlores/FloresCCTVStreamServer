@@ -68,4 +68,4 @@ webcontrol_localhost off
 # Live Stream params
 ############################################################
 
-stream_localhost off" >> config/motion.conf
+stream_localhost off" > config/motion.conf
