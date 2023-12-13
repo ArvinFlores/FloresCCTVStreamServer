@@ -8,6 +8,6 @@ filename="$(pwd)/$timestamp.$ext"
 
 ffmpeg -i /dev/video3 -t 10 "$filename"
 
-curl -X POST -v -F file=@"$filename" "$FLORESCCTV_API_URL/recordings"
+curl -X POST -v -F file=@"$filename" -k "$FLORESCCTV_API_URL/recordings"
 
 rm "$filename"
