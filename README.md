@@ -276,3 +276,83 @@ Then add this line to run the cron job every 5 minutes
 ```
 
 A `health.json` file will then be placed in the `build/` directory and can then be retrieved via an api call to `https://<raspberry_pi_ip>:9000/health.json`
+
+### Running with motion detection
+To enable motion detection you will have to run through a few steps
+
+1. Configure `/boot/config.txt`
+You will need to set `arm_64bit=0` and make sure there are no `dtoverlay=<value>` entries in the `/boot/config.txt` file then remember to `sudo reboot` once you've made those changes
+
+2. Install the dependencies
+```
+sudo apt-get install motion ffmpeg v4l2loopback-dkms
+```
+
+3. Setup video loopback devices
+You will need to create virtual video nodes with the use of the `v4l2loopback` kernel module
+```
+sudo nano /etc/modules-load.d/v4l2loopback.conf
+# add this content
+v4l2loopback
+
+
+sudo nano /etc/modprobe.d/v4l2loopback.conf
+# add this content
+options v4l2loopback video_nr=1,2,3 card_label="uv4l video device,motion video device,recording video device" exclusive_caps=1 
+```
+Then run `sudo reboot` and verify the virtual video devices have been created with `v4l2-ctl --list-devices`
+
+You should see some entries like this
+
+```
+uv4l video device (platform:v4l2loopback-000):
+	/dev/video1
+
+motion video device (platform:v4l2loopback-001):
+	/dev/video2
+
+recording video device (platform:v4l2loopback-002):
+	/dev/video3
+```
+
+4. Setup audio loopback devices
+You will need to create virtual audio devices with the use of the `snd-aloop` kernel module
+```
+sudo nano /etc/modules-load.d/snd-aloop.conf
+# add this content
+snd-aloop
+```
+Then run `sudo reboot` and verify the virtual audio devices have been created with `arecord -l`
+
+You should see some entries like this
+
+```
+card 0: Loopback [Loopback], device 0: Loopback PCM [Loopback PCM]
+  Subdevices: 8/8
+  Subdevice #0: subdevice #0
+  Subdevice #1: subdevice #1
+  Subdevice #2: subdevice #2
+  Subdevice #3: subdevice #3
+  Subdevice #4: subdevice #4
+  Subdevice #5: subdevice #5
+  Subdevice #6: subdevice #6
+  Subdevice #7: subdevice #7
+card 0: Loopback [Loopback], device 1: Loopback PCM [Loopback PCM]
+  Subdevices: 8/8
+  Subdevice #0: subdevice #0
+  Subdevice #1: subdevice #1
+  Subdevice #2: subdevice #2
+  Subdevice #3: subdevice #3
+  Subdevice #4: subdevice #4
+  Subdevice #5: subdevice #5
+  Subdevice #6: subdevice #6
+  Subdevice #7: subdevice #7
+```
+
+5. Generate the motion.conf file
+From the root of this project you need to run the script that generates the `motion.conf` file
+```
+./scripts/gen_motion_conf.sh
+```
+
+6. Start the script with the `--motion` flag like so `./start.sh --motion`
