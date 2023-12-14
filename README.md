@@ -281,6 +281,7 @@ A `health.json` file will then be placed in the `build/` directory and can then 
 To enable motion detection you will have to run through a few steps
 
 1. Configure `/boot/config.txt`
+
 You will need to set `arm_64bit=0` and make sure there are no `dtoverlay=<value>` entries in the `/boot/config.txt` file then remember to `sudo reboot` once you've made those changes
 
 2. Install the dependencies
@@ -289,6 +290,7 @@ sudo apt-get install motion ffmpeg v4l2loopback-dkms
 ```
 
 3. Setup video loopback devices
+
 You will need to create virtual video nodes with the use of the `v4l2loopback` kernel module
 ```
 sudo nano /etc/modules-load.d/v4l2loopback.conf
@@ -316,6 +318,7 @@ recording video device (platform:v4l2loopback-002):
 ```
 
 4. Setup audio loopback devices
+
 You will need to create virtual audio devices with the use of the `snd-aloop` kernel module
 ```
 sudo nano /etc/modules-load.d/snd-aloop.conf
@@ -350,6 +353,7 @@ card 0: Loopback [Loopback], device 1: Loopback PCM [Loopback PCM]
 ```
 
 5. Generate the motion.conf file
+
 From the root of this project you need to run the script that generates the `motion.conf` file
 ```
 ./scripts/gen_motion_conf.sh
