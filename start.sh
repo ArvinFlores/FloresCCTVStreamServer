@@ -50,11 +50,9 @@ if [[ $1 == "--motion" ]]; then
   ffmpeg -f video4linux2 \
     -i /dev/video0 \
     -f alsa -ac 1 -i hw:2,0 \
-    -vcodec copy \
-    -acodec copy \
-    -f v4l2 -map 0:v /dev/video1 \
-    -f v4l2 -map 0:v /dev/video2 \
-    -f v4l2 -map 0:v /dev/video3 \
+    -f v4l2 -map 0:v -filter:v fps=30 /dev/video1 \
+    -f v4l2 -map 0:v -filter:v fps=30 /dev/video2 \
+    -f v4l2 -map 0:v -filter:v fps=30 /dev/video3 \
     -f alsa -map 1:a hw:0,0 \
     -f alsa -map 1:a hw:0,1 > /dev/null 2>&1 &
   motion -c ./config/motion.conf > /dev/null 2>&1

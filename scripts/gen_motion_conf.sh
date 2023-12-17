@@ -33,9 +33,9 @@ framerate 15
 ############################################################
 
 emulate_motion off
-threshold 1500
+threshold 5000
 despeckle_filter EedDl
-minimum_motion_frames 1
+minimum_motion_frames 5
 event_gap 60
 pre_capture 3
 post_capture 0
@@ -44,7 +44,7 @@ post_capture 0
 # Script Execution params
 ############################################################
 
-on_event_start cd $(pwd) && $(pwd)/scripts/upload_recording.sh
+on_motion_detected cd $(pwd) && $(pwd)/scripts/upload_recording.sh
 
 ############################################################
 # Pictures params

@@ -19,6 +19,7 @@ config/
 *.pem
 *.crt
 *.key
+tmp/
 
 # debug
 npm-debug.log*
