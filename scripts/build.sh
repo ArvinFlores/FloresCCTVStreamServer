@@ -38,5 +38,8 @@ else
   log "Removing $WEB_ASSETS_PATH"
   rm -rf $WEB_ASSETS_PATH
 
+  log "Creating the health.json file"
+  python $CURR_DIR/scripts/health.py
+
   log "Streaming server is ready to run in production"
 fi
