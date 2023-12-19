@@ -34,6 +34,7 @@ framerate 15
 
 emulate_motion off
 threshold 5000
+threshold_maximum 5500
 despeckle_filter EedDl
 minimum_motion_frames 5
 event_gap 60
