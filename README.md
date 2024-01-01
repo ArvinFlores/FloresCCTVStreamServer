@@ -317,46 +317,11 @@ recording video device (platform:v4l2loopback-002):
 	/dev/video3
 ```
 
-4. Setup audio loopback devices
-
-You will need to create virtual audio devices with the use of the `snd-aloop` kernel module
-```
-sudo nano /etc/modules-load.d/snd-aloop.conf
-# add this content
-snd-aloop
-```
-Then run `sudo reboot` and verify the virtual audio devices have been created with `arecord -l`
-
-You should see some entries like this
-
-```
-card 0: Loopback [Loopback], device 0: Loopback PCM [Loopback PCM]
-  Subdevices: 8/8
-  Subdevice #0: subdevice #0
-  Subdevice #1: subdevice #1
-  Subdevice #2: subdevice #2
-  Subdevice #3: subdevice #3
-  Subdevice #4: subdevice #4
-  Subdevice #5: subdevice #5
-  Subdevice #6: subdevice #6
-  Subdevice #7: subdevice #7
-card 0: Loopback [Loopback], device 1: Loopback PCM [Loopback PCM]
-  Subdevices: 8/8
-  Subdevice #0: subdevice #0
-  Subdevice #1: subdevice #1
-  Subdevice #2: subdevice #2
-  Subdevice #3: subdevice #3
-  Subdevice #4: subdevice #4
-  Subdevice #5: subdevice #5
-  Subdevice #6: subdevice #6
-  Subdevice #7: subdevice #7
-```
-
-5. Generate the motion.conf file
+4. Generate the motion.conf file
 
 From the root of this project you need to run the script that generates the `motion.conf` file
 ```
 ./scripts/gen_motion_conf.sh
 ```
 
-6. Start the script with the `--motion` flag like so `./start.sh --motion`
+5. Start the script with the `--motion` flag like so `./start.sh --motion`
