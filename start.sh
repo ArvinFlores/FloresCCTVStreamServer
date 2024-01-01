@@ -18,7 +18,6 @@ CERT_PATH=$PWD/selfsign.crt
 PKEY_PATH=$PWD/selfsign.key
 ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
 VIDEO_NODE=$([ $1 == "--motion" ] && echo "video1" || echo "video0")
-AUDIO_NODE=$([ $1 == "--motion" ] && echo "6" || echo "0")
 
 if [[ $FLORESCCTV_ENV == "PROD" ]]; then
   source scripts/build.sh
@@ -50,13 +49,9 @@ if [[ $1 == "--motion" ]]; then
   ffmpeg -thread_queue_size 512 \
     -f video4linux2 \
     -i /dev/video0 \
-    -thread_queue_size 512 \
-    -f alsa -ac 1 -i hw:2,0 \
-    -f v4l2 -map 0:v -c:v copy /dev/video1 \
-    -f v4l2 -map 0:v -c:v copy /dev/video2 \
-    -f v4l2 -map 0:v -c:v copy /dev/video3 \
-    -f alsa -map 1:a -c:a copy hw:0,0 \
-    -f alsa -map 1:a -c:a copy hw:0,1 > /dev/null 2>&1 &
+    -f v4l2 -c:v copy /dev/video1 \
+    -f v4l2 -c:v copy /dev/video2 \
+    -f v4l2 -c:v copy /dev/video3 > /dev/null 2>&1 &
   motion -c ./config/motion.conf > /dev/null 2>&1
   echo "motion detection enabled"
   echo "video/audio loopback devices have been created"
@@ -81,5 +76,5 @@ sudo /usr/bin/uv4l \
 --server-option '--enable-www-server=yes' \
 --server-option '--enable-webrtc-video=yes' \
 --server-option '--enable-webrtc-audio=yes' \
---server-option '--webrtc-receive-audio=yes' \
---server-option "--webrtc-recdevice-index=$AUDIO_NODE"
+--server-option '--webrtc-echo-cancellation=yes' \
+--server-option '--webrtc-receive-audio=yes'

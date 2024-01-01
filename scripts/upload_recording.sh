@@ -10,7 +10,7 @@ video_duration_secs=20
 wait_secs=10
 
 record() {
-  ffmpeg -f alsa -ac 1 -i hw:0,1 -f video4linux2 -i /dev/video3 -t $video_duration_secs "$filename"
+  ffmpeg -hide_banner -thread_queue_size 1024 -f alsa -ac 1 -i default -thread_queue_size 1024 -f video4linux2 -i /dev/video3 -t $video_duration_secs "$filename"
   if [[ $(stat -c%s $filename) -ge 1000 ]]; then
     curl -X POST -v -F file=@"$filename" -k "$FLORESCCTV_API_URL/recordings"
   fi
