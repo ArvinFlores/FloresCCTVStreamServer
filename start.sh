@@ -57,6 +57,9 @@ if [[ $1 == "--motion" ]]; then
   echo "video/audio loopback devices have been created"
 fi
 
+echo "Applying the custom camera settings"
+source scripts/set_camera_settings.sh
+
 echo "Running the server in $FLORESCCTV_ENV mode"
 
 sudo /usr/bin/uv4l \
