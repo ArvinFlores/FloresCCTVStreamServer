@@ -14,8 +14,8 @@ fi
 
 USE_SSL=yes
 STREAM_PORT=8080
-CERT_PATH=$PWD/selfsign.crt
-PKEY_PATH=$PWD/selfsign.key
+CERT_PATH=$PWD/cert.pem
+PKEY_PATH=$PWD/key.pem
 ASSET_DIR=$([ "$FLORESCCTV_ENV" == "PROD" ] && echo "build" || echo "static")
 VIDEO_NODE=$([ $1 == "--motion" ] && echo "video1" || echo "video0")
 
