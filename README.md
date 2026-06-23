@@ -174,6 +174,11 @@ sudo openssl genrsa -out ./selfsign.key 2048 &&  sudo openssl req -new -x509 -ke
 ```
 Note: Normally the `-days` flag should be something low like 365 but it's ok in this case as the app is only accessible on a LAN
 
+If using something like `mkcert` you can generate a cert and key file like so
+```
+mkcert -key-file key.pem -cert-file cert.pem <raspberry_pi_ip>
+```
+
 ### Create env file
 Create an `.env` file at the project root and add the following:
 ```
